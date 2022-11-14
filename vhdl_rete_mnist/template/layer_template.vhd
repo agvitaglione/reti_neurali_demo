@@ -42,7 +42,7 @@ architecture layer_1 of layer is
 
     Component perceptron
     Generic (
-        WEIGHTS : STD_LOGIC_VECTOR := (others => '0');
+        WEIGHTS : STD_LOGIC_VECTOR;
         SHIFT : Integer;     -- number of shift (left + or right -)
         B : Integer;          -- bias of batch norm
         BATCH_POSITIVE : Boolean    
