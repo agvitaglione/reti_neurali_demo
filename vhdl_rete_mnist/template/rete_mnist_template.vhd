@@ -35,7 +35,7 @@ use IEEE.math_real.ALL;
 entity rete_mnist is
     Port (
         x : in STD_LOGIC_VECTOR(0 to 783);
-        y : out STD_LOGIC_VECTOR(0 to %OUTPUT_UB%) := (others => '0')  
+        y : out STD_LOGIC_VECTOR(0 to %OUTPUT_UB%) 
     );
 end rete_mnist;
 
