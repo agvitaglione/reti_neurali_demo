@@ -29,9 +29,9 @@ Evaluate *mnist_binarized_model* accuracy:
 ````
 python mnistModelBinarizedTool.py -A ./models/mnist_binarized_model
 ````
-Prune *mnist_binarized_model* with threshold set to "8,4,4,4,3" and retrain to gain accuracy:
+Prune *mnist_binarized_model* with threasheld set to 4 and retrain to gain accuracy:
 ````
-python mnistModelBinarizedTool.py -P -t "8,4,4,4,3" -s ./models/mnist_binarized_pruned_model ./models/mnist_binarized_model
+python mnistModelBinarizedTool.py -P -t 4 -s ./models/mnist_binarized_pruned_model ./models/mnist_binarized_model
 ````
 Evaluate *mnist_binarized_pruned_model* accuracy
 ````
@@ -46,7 +46,7 @@ python generate_vhdl_parameters.py ../models/mnist_binarized_pruned_model
 ````
 Generate vhdl code:
 ````
-python generate_architecture_lut.py
+python generate_architecture.py
 ````
 
 ## Tools information
