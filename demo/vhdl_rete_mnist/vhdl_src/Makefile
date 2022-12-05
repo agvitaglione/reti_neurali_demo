@@ -1,4 +1,4 @@
-unisim_dir = D:/Programmi/Xilinx/Vivado/2022.2/data/vhdl/src/unisims
+unisim_dir = unisims_dir_path
 GHDL_OPT = --std=08 -frelaxed -fsynopsys
 
 ALL:

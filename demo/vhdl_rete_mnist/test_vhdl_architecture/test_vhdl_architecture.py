@@ -7,20 +7,14 @@ import util
 import binarize as Bin
 import binarizedModel as BModel
 
-test_data = datasets.MNIST(f"{os.path.dirname(__file__)}/data", train=False, transform=transforms.ToTensor(), download=True)
-test_loader = torch.utils.data.DataLoader(dataset=test_data, batch_size=100, shuffle=False)
+# test_data = datasets.MNIST(f"{os.path.dirname(__file__)}/data", train=False, transform=transforms.ToTensor(), download=True)
+# test_loader = torch.utils.data.DataLoader(dataset=test_data, batch_size=100, shuffle=False)
 
 # Files
 images_file = f"{os.path.dirname(__file__)}/images"
 labels_file = f"{os.path.dirname(__file__)}/labels"
 output_bound_file = f"{os.path.dirname(__file__)}/output_bound"
 architecture_predictions_file = f"{os.path.dirname(__file__)}/../vhdl_src/vhdl_prediction.txt"
-
-# Model
-model_path = f"{os.path.dirname(__file__)}/../../models/mnist_pruned_model"
-model = BModel.MNISTBinarizedModel(device=torch.device("cpu"))
-
-util.load_model(model, model_path)
 
 # Ottenimento bound per il parsing
 # bound_list contiene le informazioni per il parsing dell'output del modello
@@ -54,27 +48,26 @@ def getPrediction(x):
 
 # Generate file
 def main():
-    print("Generating images and labels file...")
-    with open(images_file, 'w+') as f_image, open(labels_file, 'w+') as f_labels:
+    # print("Generating images and labels file...")
+    # with open(images_file, 'w+') as f_image, open(labels_file, 'w+') as f_labels:
 
-        for images, labels in test_loader:
+        # for images, labels in test_loader:
 
-            images = images.reshape(len(images), -1)
-            # outputs, predictions = model.prediction(images, pruned=True)
+            # images = images.reshape(len(images), -1)
 
-            # Normalizzazione immagini e binarizzazione
-            images = images - 0.5
-            images = Bin.binarize01(images).int()
+            # # Normalizzazione immagini e binarizzazione
+            # images = images - 0.5
+            # images = Bin.binarize01(images).int()
             
-            # Scrittura immagini su file
-            for img in images:
-                img_str = str(img.tolist()).replace('[', '').replace(']', '').replace(', ', '')
-                f_image.write(img_str + "\n")
+            # # Scrittura immagini su file
+            # for img in images:
+                # img_str = str(img.tolist()).replace('[', '').replace(']', '').replace(', ', '')
+                # f_image.write(img_str + "\n")
                 
-            for label in labels.tolist():
-                f_labels.write(str(label) + '\n')
+            # for label in labels.tolist():
+                # f_labels.write(str(label) + '\n')
 
-    print("Operation completed!")
+    # print("Operation completed!")
 
     # Test architecture
     print("Test architecture...")
