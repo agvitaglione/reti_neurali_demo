@@ -44,6 +44,7 @@ class Binarize101(torch.autograd.Function):
     @staticmethod
     def backward(ctx, grad_output):
         return torch.nn.functional.hardtanh(grad_output)
+        
 binarize101 = Binarize101.apply
 
 # Funzione per approssimare alla potenza di 2 più vicina

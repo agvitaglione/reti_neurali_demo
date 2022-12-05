@@ -1,5 +1,6 @@
 import torch
 import binarize as bin
+import util
 
 class BinarizeLayer(torch.nn.Module):
 
@@ -11,55 +12,38 @@ class BinarizeLayer(torch.nn.Module):
     def forward(self, x):
         return self.binFunction(x)
 
-class ConvBinLayer(torch.nn.Module):
-
-    def __init__(self, weights, device="cpu", binfunction=bin.binarize11):
-
-        super(ConvBinLayer, self).__init__()
-
-        self.device = device
-
-        # weights (size_out x size_in x kernel_size)
-        self.weights = torch.nn.Parameter(weights)
-
-        self.bl = BinarizeLayer(binfunction)
-
-    def forward(self, x):
-
-        # Livello di binarizzazione dei pesi
-        wb = self.bl(self.weights)
-
-        # Convoluzione
-        return torch.nn.functional.conv2d(x, wb)
-
 
 class LinearBin(torch.nn.Module):
 
-    def __init__(self, weight, bias=None, binFunction=bin.binarize11, device="cpu"):
+    def __init__(self, weight, bias=None, threshold=0, device="cpu"):
 
         super(LinearBin, self).__init__()
 
         self.weight = torch.nn.Parameter(weight)
         self.bias = bias
+        self.threshold = threshold
 
         # Layers
-        self.bl = BinarizeLayer(binFunction)
+        self.bl = bin.binarize101
 
 
     def forward(self, x):
 
         # Binarizzazione dei pesi
+        old = bin.Binarize101.threshold
+        bin.Binarize101.threshold = self.threshold
         wb = self.bl(self.weight)
+        bin.Binarize101.threshold = old
 
         #---------- FOR REPORT
-        #weights = [[x for x in lista if x != 0] for lista in wb.int().tolist()]
-        #util.report(f"------\nWeights exit\n{weights}\n")
+        # weights = [[x for x in lista if x != 0] for lista in wb.int().tolist()]
+        # util.report(f"------\nWeights exit\n{weights}\n")
 
         # Calcolo output
         return torch.nn.functional.linear(x, wb, self.bias)
 
-    def setBinFunction(self, binFunc):
-        self.bl.binFunction = binFunc
+    def setThreshold(self, threshold):
+        self.threshold = threshold
 
 
 class BatchNorm1D(torch.nn.Module):
@@ -91,7 +75,6 @@ class BatchNorm1D(torch.nn.Module):
     def forward(self, x):
 
         # Algoritmo del paper
-
         eps = 1e-5
         
         if self.inference:
@@ -102,6 +85,7 @@ class BatchNorm1D(torch.nn.Module):
             w = self.gamma * torch.sqrt(self.VarP + eps).pow_(-1) 
             b = b.floor_()
             y = (bin.AP2(w) * x).floor_() + b            # Moltiplicazione -> shift register (mul per potenza 2)
+            #y = w * x + b
 
         else:
                 
@@ -147,6 +131,30 @@ class BatchNorm1D(torch.nn.Module):
         w = self.gamma * torch.sqrt(self.VarP + eps).pow_(-1) 
         b = b.floor_()
         return bin.AP2(w), b            # Moltiplicazione -> shift register (mul per potenza 2)
+
+# ------------------------------------------------
+# For concolutional model
+
+class ConvBinLayer(torch.nn.Module):
+
+    def __init__(self, weights, device="cpu", binfunction=bin.binarize11):
+
+        super(ConvBinLayer, self).__init__()
+
+        self.device = device
+
+        # weights (size_out x size_in x kernel_size)
+        self.weights = torch.nn.Parameter(weights)
+
+        self.bl = BinarizeLayer(binfunction)
+
+    def forward(self, x):
+
+        # Livello di binarizzazione dei pesi
+        wb = self.bl(self.weights)
+
+        # Convoluzione
+        return torch.nn.functional.conv2d(x, wb)
 
 class LazyBatchNorm2D(torch.nn.Module):
 

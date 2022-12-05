@@ -106,9 +106,58 @@ class ThresholdPruning(prune.BasePruningMethod):
     def compute_mask(self, tensor, default_mask):
         return torch.abs(tensor) > self.threshold
 
+# Converte un numero da esadecimale in binario su nom_of_bits bit
+def hex2bin(x, num_of_bits):
+
+    output = ""
+    for elem in x:
+        match elem:
+            case "0":
+                output += '0000'
+            case "1":
+                output += '0001'
+            case "2":
+                output += '0010'
+            case "3":
+                output += '0011'
+            case "4":
+                output += '0100'
+            case "5":
+                output += '0101'
+            case "6":
+                output += '0110'
+            case "7":
+                output += '0111'
+            case "8":
+                output += '1000'
+            case "9":
+                output += '1001'
+            case "A":
+                output += '1010'
+            case "B":
+                output += '1011'
+            case "C":
+                output += '1100'
+            case "D":
+                output += '1101'
+            case "E":
+                output += '1110'
+            case "F":
+                output += '1111'
+    return output[len(output) - num_of_bits : len(output)]
+
+# Converte dalla codifica in complementi a 2 ad intero con segno
+def bin2int(x):
+    tot = 0
+    tot -= 2**(len(x) - 1) * int(x[0])
+    for i in range(len(x)):
+        if i == 0:
+            continue
+        tot += 2**(len(x) - i - 1) * int(x[i])
+    return tot
+
 #---------- ---------------
 import os
 def report(text):
-    return
     with open(f"{os.path.dirname(__file__)}/log.txt", 'a+') as f:
         f.write(text)
